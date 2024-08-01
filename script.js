@@ -1,6 +1,6 @@
 const board = document.getElementById('board');
 const keyboard = document.getElementById('keyboard');
-const targetWord = 'graph';
+const targetWord = 'GRAPH';
 let currentRow = 0;
 let currentCol = 0;
 
