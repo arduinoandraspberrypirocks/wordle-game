@@ -36,13 +36,8 @@ body {
 }
 
 #keyboard {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.key-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
     gap: 5px;
 }
 
@@ -73,3 +68,4 @@ body {
     background-color: gray;
     color: white;
 }
+
