@@ -36,8 +36,13 @@ body {
 }
 
 #keyboard {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.key-row {
+    display: flex;
     gap: 5px;
 }
 
