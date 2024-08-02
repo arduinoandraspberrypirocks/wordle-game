@@ -1,6 +1,6 @@
 const board = document.getElementById('board');
 const keyboard = document.getElementById('keyboard');
-const targetWord = 'SOLAR';
+const targetWord = 'HELLO';
 let currentRow = 0;
 let currentCol = 0;
 
@@ -15,12 +15,13 @@ for (let i = 0; i < 30; i++) {
 // Initialize the keyboard
 const keys = 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
 keys.forEach(key => {
-    const keyButton = document.createElement('div');
-    keyButton.classList.add('key');
-    keyButton.textContent = key;
+    const keyButton = document.querySelector(`.key:contains('${key}')`);
     keyButton.addEventListener('click', () => handleKeyClick(key));
-    keyboard.appendChild(keyButton);
 });
+
+// Add event listeners for Enter and Delete keys
+document.getElementById('enter').addEventListener('click', () => handleEnter());
+document.getElementById('delete').addEventListener('click', () => handleDelete());
 
 function handleKeyClick(key) {
     if (currentCol < 5 && currentRow < 6) {
@@ -30,17 +31,25 @@ function handleKeyClick(key) {
     }
 }
 
+function handleEnter() {
+    if (currentCol === 5) {
+        checkWord();
+    }
+}
+
+function handleDelete() {
+    if (currentCol > 0) {
+        currentCol--;
+        const cell = document.getElementById(`cell-${currentRow * 5 + currentCol}`);
+        cell.textContent = '';
+    }
+}
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-        if (currentCol === 5) {
-            checkWord();
-        }
+        handleEnter();
     } else if (e.key === 'Backspace') {
-        if (currentCol > 0) {
-            currentCol--;
-            const cell = document.getElementById(`cell-${currentRow * 5 + currentCol}`);
-            cell.textContent = '';
-        }
+        handleDelete();
     } else if (keys.includes(e.key.toUpperCase())) {
         handleKeyClick(e.key.toUpperCase());
     }
