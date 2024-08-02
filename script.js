@@ -15,11 +15,8 @@ for (let i = 0; i < 30; i++) {
 // Initialize the keyboard
 const keys = 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
 keys.forEach(key => {
-    const keyButton = document.createElement('div');
-    keyButton.classList.add('key');
-    keyButton.textContent = key;
+    const keyButton = document.querySelector(`.key:contains('${key}')`);
     keyButton.addEventListener('click', () => handleKeyClick(key));
-    keyboard.appendChild(keyButton);
 });
 
 // Add event listeners for Enter and Delete keys
