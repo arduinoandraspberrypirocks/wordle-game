@@ -1,6 +1,6 @@
 const board = document.getElementById('board');
 const keyboard = document.getElementById('keyboard');
-const targetWord = 'HELLO';
+const targetWord = 'SOLAR';
 let currentRow = 0;
 let currentCol = 0;
 
@@ -73,4 +73,3 @@ function checkWord() {
         }
     }
 }
-
