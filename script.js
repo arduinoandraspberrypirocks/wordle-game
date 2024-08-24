@@ -1,10 +1,11 @@
 const wordleWord = "flask"; // The word to guess
 let currentRow = 0;
 let currentCol = 0;
+const maxAttempts = 6;
 
 // Create the game board
 const board = document.getElementById('board');
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < maxAttempts; i++) {
     for (let j = 0; j < 5; j++) {
         const tile = document.createElement('div');
         tile.classList.add('tile');
@@ -26,11 +27,11 @@ document.querySelectorAll('.keyboard button').forEach(button => {
             }
         } else if (letter === 'Enter') {
             if (currentCol === 5) {
-                let word = '';
+                let guessedWord = '';
                 for (let i = 0; i < 5; i++) {
-                    word += tiles[currentRow * 5 + i].textContent;
+                    guessedWord += tiles[currentRow * 5 + i].textContent.toLowerCase();
                 }
-                checkWord(word.toLowerCase());
+                checkWord(guessedWord);
             }
         } else if (currentCol < 5) {
             tiles[currentRow * 5 + currentCol].textContent = letter;
@@ -49,11 +50,11 @@ document.addEventListener('keydown', (e) => {
         }
     } else if (key === 'ENTER') {
         if (currentCol === 5) {
-            let word = '';
+            let guessedWord = '';
             for (let i = 0; i < 5; i++) {
-                word += tiles[currentRow * 5 + i].textContent;
+                guessedWord += tiles[currentRow * 5 + i].textContent.toLowerCase();
             }
-            checkWord(word.toLowerCase());
+            checkWord(guessedWord);
         }
     } else if (key.length === 1 && /[A-Z]/.test(key) && currentCol < 5) {
         tiles[currentRow * 5 + currentCol].textContent = key;
@@ -62,17 +63,31 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Check the guessed word
-function checkWord(word) {
+function checkWord(guessedWord) {
+    if (guessedWord === wordleWord) {
+        alert('Congratulations! You guessed the word!');
+        // Optionally reset the game here
+        return;
+    }
+
     for (let i = 0; i < 5; i++) {
         const tile = tiles[currentRow * 5 + i];
-        if (word[i] === wordleWord[i]) {
+        const letter = guessedWord[i];
+
+        if (letter === wordleWord[i]) {
             tile.classList.add('correct');
-        } else if (wordleWord.includes(word[i])) {
+        } else if (wordleWord.includes(letter)) {
             tile.classList.add('present');
         } else {
             tile.classList.add('absent');
         }
     }
+
     currentRow++;
     currentCol = 0;
+
+    if (currentRow === maxAttempts) {
+        alert(`Game Over! The word was: ${wordleWord}`);
+        // Optionally reset the game here
+    }
 }
