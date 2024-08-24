@@ -1,75 +1,78 @@
-const board = document.getElementById('board');
-const keyboard = document.getElementById('keyboard');
-const targetWord = 'flask';
+const wordleWord = "flask"; // The word to guess
 let currentRow = 0;
 let currentCol = 0;
 
-// Initialize the board
-for (let i = 0; i < 30; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    cell.id = `cell-${i}`;
-    board.appendChild(cell);
-}
-
-// Initialize the keyboard
-const keys = 'QWERTYUIOPASDFGHJKLZXCVBNM'.split('');
-keys.forEach(key => {
-    const keyButton = document.createElement('div');
-    keyButton.classList.add('key');
-    keyButton.textContent = key;
-    keyButton.addEventListener('click', () => handleKeyClick(key));
-    keyboard.appendChild(keyButton);
-});
-
-function handleKeyClick(key) {
-    if (currentCol < 5 && currentRow < 6) {
-        const cell = document.getElementById(`cell-${currentRow * 5 + currentCol}`);
-        cell.textContent = key;
-        currentCol++;
+// Create the game board
+const board = document.getElementById('board');
+for (let i = 0; i < 6; i++) {
+    for (let j = 0; j < 5; j++) {
+        const tile = document.createElement('div');
+        tile.classList.add('tile');
+        board.appendChild(tile);
     }
 }
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        if (currentCol === 5) {
-            checkWord();
+const tiles = board.getElementsByClassName('tile');
+
+// Handle keyboard button clicks
+document.querySelectorAll('.keyboard button').forEach(button => {
+    button.addEventListener('click', () => {
+        const letter = button.textContent;
+
+        if (letter === 'Delete') {
+            if (currentCol > 0) {
+                currentCol--;
+                tiles[currentRow * 5 + currentCol].textContent = '';
+            }
+        } else if (letter === 'Enter') {
+            if (currentCol === 5) {
+                let word = '';
+                for (let i = 0; i < 5; i++) {
+                    word += tiles[currentRow * 5 + i].textContent;
+                }
+                checkWord(word.toLowerCase());
+            }
+        } else if (currentCol < 5) {
+            tiles[currentRow * 5 + currentCol].textContent = letter;
+            currentCol++;
         }
-    } else if (e.key === 'Backspace') {
+    });
+});
+
+// Handle keyboard typing
+document.addEventListener('keydown', (e) => {
+    const key = e.key.toUpperCase();
+    if (key === 'BACKSPACE') {
         if (currentCol > 0) {
             currentCol--;
-            const cell = document.getElementById(`cell-${currentRow * 5 + currentCol}`);
-            cell.textContent = '';
+            tiles[currentRow * 5 + currentCol].textContent = '';
         }
-    } else if (keys.includes(e.key.toUpperCase())) {
-        handleKeyClick(e.key.toUpperCase());
+    } else if (key === 'ENTER') {
+        if (currentCol === 5) {
+            let word = '';
+            for (let i = 0; i < 5; i++) {
+                word += tiles[currentRow * 5 + i].textContent;
+            }
+            checkWord(word.toLowerCase());
+        }
+    } else if (key.length === 1 && /[A-Z]/.test(key) && currentCol < 5) {
+        tiles[currentRow * 5 + currentCol].textContent = key;
+        currentCol++;
     }
 });
 
-function checkWord() {
-    let guess = '';
+// Check the guessed word
+function checkWord(word) {
     for (let i = 0; i < 5; i++) {
-        guess += document.getElementById(`cell-${currentRow * 5 + i}`).textContent;
-    }
-
-    for (let i = 0; i < 5; i++) {
-        const cell = document.getElementById(`cell-${currentRow * 5 + i}`);
-        if (guess[i] === targetWord[i]) {
-            cell.classList.add('correct');
-        } else if (targetWord.includes(guess[i])) {
-            cell.classList.add('present');
+        const tile = tiles[currentRow * 5 + i];
+        if (word[i] === wordleWord[i]) {
+            tile.classList.add('correct');
+        } else if (wordleWord.includes(word[i])) {
+            tile.classList.add('present');
         } else {
-            cell.classList.add('absent');
+            tile.classList.add('absent');
         }
     }
-
-    if (guess === targetWord) {
-        alert('You win!');
-    } else {
-        currentRow++;
-        currentCol = 0;
-        if (currentRow === 6) {
-            alert('Game over! The word was ' + targetWord);
-        }
-    }
+    currentRow++;
+    currentCol = 0;
 }
