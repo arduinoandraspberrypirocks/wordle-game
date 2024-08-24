@@ -1,64 +1,91 @@
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-    background-color: #f0f0f0;
+const wordleWord = "flask"; // The word to guess
+let currentRow = 0;
+let currentCol = 0;
+const maxAttempts = 6;
+
+// Create the game board
+const board = document.getElementById('board');
+for (let i = 0; i < maxAttempts; i++) {  // Loop through rows
+    for (let j = 0; j < 5; j++) {  // Loop through columns
+        const tile = document.createElement('div');
+        tile.classList.add('tile');
+        board.appendChild(tile);
+    }
 }
 
-h1 {
-    margin-bottom: 20px;
-}
+const tiles = board.getElementsByClassName('tile');
 
-.board-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
+// Handle keyboard button clicks
+document.querySelectorAll('.keyboard button').forEach(button => {
+    button.addEventListener('click', () => {
+        const letter = button.textContent;
 
-.board {
-    display: grid;
-    grid-template-columns: repeat(5, 60px);
-    grid-template-rows: repeat(6, 60px);
-    gap: 5px;
-}
+        if (letter === 'Delete') {
+            if (currentCol > 0) {
+                currentCol--;
+                tiles[currentRow * 5 + currentCol].textContent = '';
+            }
+        } else if (letter === 'Enter') {
+            if (currentCol === 5) {
+                let guessedWord = '';
+                for (let i = 0; i < 5; i++) {
+                    guessedWord += tiles[currentRow * 5 + i].textContent.toLowerCase();
+                }
+                checkWord(guessedWord);
+            }
+        } else if (currentCol < 5) {
+            tiles[currentRow * 5 + currentCol].textContent = letter;
+            currentCol++;
+        }
+    });
+});
 
-.tile {
-    width: 60px;
-    height: 60px;
-    border: 2px solid #ddd;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    font-weight: bold;
-    text-transform: uppercase;
-    background-color: #fff;
-}
+// Handle keyboard typing
+document.addEventListener('keydown', (e) => {
+    const key = e.key.toUpperCase();
+    if (key === 'BACKSPACE') {
+        if (currentCol > 0) {
+            currentCol--;
+            tiles[currentRow * 5 + currentCol].textContent = '';
+        }
+    } else if (key === 'ENTER') {
+        if (currentCol === 5) {
+            let guessedWord = '';
+            for (let i = 0; i < 5; i++) {
+                guessedWord += tiles[currentRow * 5 + i].textContent.toLowerCase();
+            }
+            checkWord(guessedWord);
+        }
+    } else if (key.length === 1 && /[A-Z]/.test(key) && currentCol < 5) {
+        tiles[currentRow * 5 + currentCol].textContent = key;
+        currentCol++;
+    }
+});
 
-.correct {
-    background-color: green;
-    color: white;
-}
+// Check the guessed word
+function checkWord(guessedWord) {
+    if (guessedWord === wordleWord) {
+        alert('Congratulations! You guessed the word!');
+        return;
+    }
 
-.present {
-    background-color: yellow;
-    color: black;
-}
+    for (let i = 0; i < 5; i++) {
+        const tile = tiles[currentRow * 5 + i];
+        const letter = guessedWord[i];
 
-.absent {
-    background-color: gray;
-    color: white;
-}
+        if (letter === wordleWord[i]) {
+            tile.classList.add('correct');
+        } else if (wordleWord.includes(letter)) {
+            tile.classList.add('present');
+        } else {
+            tile.classList.add('absent');
+        }
+    }
 
-.keyboard {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 5px;
-    justify-content: center;
-}
+    currentRow++;
+    currentCol = 0;
 
-.keyboard button {
-    height: 50px;
-    font-size: 18px;
-    cursor: pointer;
+    if (currentRow === maxAttempts) {
+        alert(`Game Over! The word was: ${wordleWord}`);
+    }
 }
