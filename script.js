@@ -5,8 +5,8 @@ const maxAttempts = 6;
 
 // Create the game board
 const board = document.getElementById('board');
-for (let i = 0; i < maxAttempts; i++) {
-    for (let j = 0; j < 5; j++) {
+for (let i = 0; i < maxAttempts; i++) {  // Loop through rows
+    for (let j = 0; j < 5; j++) {  // Loop through columns
         const tile = document.createElement('div');
         tile.classList.add('tile');
         board.appendChild(tile);
